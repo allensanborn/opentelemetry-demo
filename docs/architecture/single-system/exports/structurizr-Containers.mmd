@@ -1,0 +1,117 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Container View: Astronomy Shop"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Customer</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Browses the product catalog,<br />places orders, and chats with<br />the shopping assistant.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    25("<div style='font-weight: bold'>Load Generator</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Simulates real users by<br />driving synthetic browsing<br />and checkout traffic.</div>")
+    style 25 fill:#8a8a8a,stroke:#606060,color:#ffffff
+    27("<div style='font-weight: bold'>LLM API</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>External OpenAI-compatible<br />large-language-model endpoint<br />used by the shopping<br />assistant.</div>")
+    style 27 fill:#8a8a8a,stroke:#606060,color:#ffffff
+
+    subgraph 2 ["Astronomy Shop"]
+      style 2 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      subgraph group1 ["Chat / AI Assistant"]
+        style group1 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        6("<div style='font-weight: bold'>Chatbot</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / FastAPI]</div><div style='font-size: 80%; margin-top:10px'>Chat UI for the shopping<br />assistant.</div>")
+        style 6 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        7("<div style='font-weight: bold'>Agent</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / LangChain + LangGraph]</div><div style='font-size: 80%; margin-top:10px'>LLM agent that answers<br />shopping questions by calling<br />shop tools and an external<br />model.</div>")
+        style 7 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        8("<div style='font-weight: bold'>MCP Server</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / FastMCP]</div><div style='font-size: 80%; margin-top:10px'>Exposes the shop's REST API<br />to the agent as MCP tools.</div>")
+        style 8 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph group2 ["Data Stores"]
+        style group2 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        22[("<div style='font-weight: bold'>Cart Store</div><div style='font-size: 70%; margin-top: 0px'>[Container: Valkey (Redis-compatible)]</div><div style='font-size: 80%; margin-top:10px'>Stores cart contents keyed by<br />user.</div>")]
+        style 22 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        23[("<div style='font-weight: bold'>Astronomy DB</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL]</div><div style='font-size: 80%; margin-top:10px'>Product catalog data and<br />order records.</div>")]
+        style 23 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        24["<div style='font-weight: bold'>Order Bus</div><div style='font-size: 70%; margin-top: 0px'>[Container: Apache Kafka]</div><div style='font-size: 80%; margin-top:10px'>Streams placed-order events<br />to async consumers.</div>"]
+        style 24 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph group3 ["Edge & Web"]
+        style group3 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        3("<div style='font-weight: bold'>Frontend Proxy</div><div style='font-size: 70%; margin-top: 0px'>[Container: Envoy]</div><div style='font-size: 80%; margin-top:10px'>Single public entrypoint;<br />routes browser traffic to the<br />web app, images, chat, and<br />observability UIs.</div>")
+        style 3 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        4("<div style='font-weight: bold'>Frontend</div><div style='font-size: 70%; margin-top: 0px'>[Container: TypeScript / Next.js]</div><div style='font-size: 80%; margin-top:10px'>Server-rendered web store and<br />backend-for-frontend that<br />aggregates the shop services.</div>")
+        style 4 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        5("<div style='font-weight: bold'>Image Provider</div><div style='font-size: 70%; margin-top: 0px'>[Container: nginx]</div><div style='font-size: 80%; margin-top:10px'>Serves static product images.</div>")
+        style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph group4 ["Order Processing (async)"]
+        style group4 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        19("<div style='font-weight: bold'>Accounting</div><div style='font-size: 70%; margin-top: 0px'>[Container: C# / .NET]</div><div style='font-size: 80%; margin-top:10px'>Records placed orders for<br />bookkeeping.</div>")
+        style 19 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        20("<div style='font-weight: bold'>Fraud Detection</div><div style='font-size: 70%; margin-top: 0px'>[Container: Kotlin / JVM]</div><div style='font-size: 80%; margin-top:10px'>Flags potentially fraudulent<br />orders.</div>")
+        style 20 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph group5 ["Shop Services"]
+        style group5 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        10("<div style='font-weight: bold'>Cart</div><div style='font-size: 70%; margin-top: 0px'>[Container: C# / .NET]</div><div style='font-size: 80%; margin-top:10px'>Holds each user's shopping<br />cart.</div>")
+        style 10 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        11("<div style='font-weight: bold'>Checkout</div><div style='font-size: 70%; margin-top: 0px'>[Container: Go]</div><div style='font-size: 80%; margin-top:10px'>Orchestrates order placement<br />across cart, payment,<br />shipping, and email.</div>")
+        style 11 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        12("<div style='font-weight: bold'>Currency</div><div style='font-size: 70%; margin-top: 0px'>[Container: C++]</div><div style='font-size: 80%; margin-top:10px'>Converts money between<br />currencies.</div>")
+        style 12 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        13("<div style='font-weight: bold'>Product Catalog</div><div style='font-size: 70%; margin-top: 0px'>[Container: Go]</div><div style='font-size: 80%; margin-top:10px'>Lists and looks up products.</div>")
+        style 13 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        14("<div style='font-weight: bold'>Recommendation</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python]</div><div style='font-size: 80%; margin-top:10px'>Suggests related products.</div>")
+        style 14 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        15("<div style='font-weight: bold'>Payment</div><div style='font-size: 70%; margin-top: 0px'>[Container: Node.js]</div><div style='font-size: 80%; margin-top:10px'>Charges the order to a credit<br />card (mock).</div>")
+        style 15 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        16("<div style='font-weight: bold'>Shipping</div><div style='font-size: 70%; margin-top: 0px'>[Container: Rust]</div><div style='font-size: 80%; margin-top:10px'>Calculates shipping cost and<br />ships the order.</div>")
+        style 16 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        17("<div style='font-weight: bold'>Quote</div><div style='font-size: 70%; margin-top: 0px'>[Container: PHP]</div><div style='font-size: 80%; margin-top:10px'>Computes shipping-cost<br />quotes.</div>")
+        style 17 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        18("<div style='font-weight: bold'>Email</div><div style='font-size: 70%; margin-top: 0px'>[Container: Ruby / Sinatra]</div><div style='font-size: 80%; margin-top:10px'>Sends the order-confirmation<br />email (mock).</div>")
+        style 18 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        9("<div style='font-weight: bold'>Ad</div><div style='font-size: 70%; margin-top: 0px'>[Container: Java]</div><div style='font-size: 80%; margin-top:10px'>Returns contextual ads for a<br />product category.</div>")
+        style 9 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+    end
+
+    1-. "<div>Browses, buys, and chats via</div><div style='font-size: 70%'>[HTTPS]</div>" .->3
+    25-. "<div>Drives synthetic traffic<br />through</div><div style='font-size: 70%'>[HTTPS / k6]</div>" .->3
+    3-. "<div>Routes web & API requests to</div><div style='font-size: 70%'>[HTTP]</div>" .->4
+    3-. "<div>Routes product-image requests<br />to</div><div style='font-size: 70%'>[HTTP]</div>" .->5
+    3-. "<div>Routes chat requests to</div><div style='font-size: 70%'>[HTTP]</div>" .->6
+    4-. "<div>Requests contextual ads from</div><div style='font-size: 70%'>[gRPC]</div>" .->9
+    4-. "<div>Reads and updates the cart<br />via</div><div style='font-size: 70%'>[gRPC]</div>" .->10
+    4-. "<div>Places orders through</div><div style='font-size: 70%'>[gRPC]</div>" .->11
+    4-. "<div>Converts prices via</div><div style='font-size: 70%'>[gRPC]</div>" .->12
+    4-. "<div>Looks up products via</div><div style='font-size: 70%'>[gRPC]</div>" .->13
+    4-. "<div>Requests recommendations from</div><div style='font-size: 70%'>[gRPC]</div>" .->14
+    4-. "<div>Requests shipping quotes from</div><div style='font-size: 70%'>[HTTP]</div>" .->16
+    6-. "<div>Forwards user prompts to</div><div style='font-size: 70%'>[HTTP]</div>" .->7
+    7-. "<div>Invokes shop tools via</div><div style='font-size: 70%'>[HTTP (MCP)]</div>" .->8
+    7-. "<div>Sends prompts to</div><div style='font-size: 70%'>[HTTPS]</div>" .->27
+    8-. "<div>Calls the shop REST API on</div><div style='font-size: 70%'>[HTTP]</div>" .->4
+    11-. "<div>Reads and clears the cart via</div><div style='font-size: 70%'>[gRPC]</div>" .->10
+    11-. "<div>Converts order totals via</div><div style='font-size: 70%'>[gRPC]</div>" .->12
+    11-. "<div>Looks up product details via</div><div style='font-size: 70%'>[gRPC]</div>" .->13
+    11-. "<div>Charges the order via</div><div style='font-size: 70%'>[gRPC]</div>" .->15
+    11-. "<div>Ships the order via</div><div style='font-size: 70%'>[HTTP]</div>" .->16
+    11-. "<div>Sends the confirmation email<br />via</div><div style='font-size: 70%'>[HTTP]</div>" .->18
+    11-. "<div>Publishes 'orders' events to</div><div style='font-size: 70%'>[Kafka]</div>" .->24
+    14-. "<div>Looks up product details via</div><div style='font-size: 70%'>[gRPC]</div>" .->13
+    16-. "<div>Requests shipping cost from</div><div style='font-size: 70%'>[HTTP]</div>" .->17
+    10-. "<div>Reads and writes cart state<br />in</div><div style='font-size: 70%'>[RESP / TCP]</div>" .->22
+    13-. "<div>Reads product data from</div><div style='font-size: 70%'>[SQL]</div>" .->23
+    19-. "<div>Writes order records to</div><div style='font-size: 70%'>[SQL]</div>" .->23
+    19-. "<div>Consumes 'orders' events from</div><div style='font-size: 70%'>[Kafka]</div>" .->24
+    20-. "<div>Consumes 'orders' events from</div><div style='font-size: 70%'>[Kafka]</div>" .->24
+
+  end

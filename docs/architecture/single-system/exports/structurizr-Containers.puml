@@ -1,0 +1,228 @@
+@startuml
+title <size:24>Container View: Astronomy Shop</size>\n<size:24>The services and data stores inside the Astronomy Shop, and how they call each other. Cross-cutting feature-flag and telemetry wiring is shown in separate views.</size>
+
+set separator none
+left to right direction
+skinparam ranksep 20
+skinparam nodesep 5
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Container
+  .Element-RWxlbWVudCxDb250YWluZXI= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Container,Database
+  .Element-RWxlbWVudCxDb250YWluZXIsRGF0YWJhc2U= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Container,Queue
+  .Element-RWxlbWVudCxDb250YWluZXIsUXVldWU= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Person
+  .Element-RWxlbWVudCxQZXJzb24= {
+    BackgroundColor: #08427b;
+    LineColor: #052e56;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Software System,External
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw= {
+    BackgroundColor: #8a8a8a;
+    LineColor: #606060;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // Astronomy Shop
+  .Boundary-QXN0cm9ub215IFNob3A= {
+    BackgroundColor: #ffffff;
+    LineColor: #0b4884;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #1168bd;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Chat / AI Assistant
+  .Group-Q2hhdCAvIEFJIEFzc2lzdGFudA== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 2-2;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Data Stores
+  .Group-RGF0YSBTdG9yZXM= {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 2-2;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Edge & Web
+  .Group-RWRnZSAmIFdlYg== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 2-2;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Order Processing (async)
+  .Group-T3JkZXIgUHJvY2Vzc2luZyAoYXN5bmMp {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 2-2;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Shop Services
+  .Group-U2hvcCBTZXJ2aWNlcw== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 2-2;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+</style>
+
+person "==Customer\n<size:16>[Person]</size>\n\nBrowses the product catalog, places orders, and chats with the shopping assistant." <<Element-RWxlbWVudCxQZXJzb24=>> as Customer
+rectangle "==Load Generator\n<size:16>[Software System]</size>\n\nSimulates real users by driving synthetic browsing and checkout traffic." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LoadGenerator
+rectangle "==LLM API\n<size:16>[Software System]</size>\n\nExternal OpenAI-compatible large-language-model endpoint used by the shopping assistant." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LLMAPI
+
+rectangle "Astronomy Shop\n<size:16>[Software System]</size>" <<Boundary-QXN0cm9ub215IFNob3A=>> {
+  rectangle "Chat / AI Assistant" <<Group-Q2hhdCAvIEFJIEFzc2lzdGFudA==>> as group1 {
+    rectangle "==Chatbot\n<size:16>[Container: Python / FastAPI]</size>\n\nChat UI for the shopping assistant." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Chatbot
+    rectangle "==Agent\n<size:16>[Container: Python / LangChain + LangGraph]</size>\n\nLLM agent that answers shopping questions by calling shop tools and an external model." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Agent
+    rectangle "==MCP Server\n<size:16>[Container: Python / FastMCP]</size>\n\nExposes the shop's REST API to the agent as MCP tools." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.MCPServer
+  }
+
+  rectangle "Data Stores" <<Group-RGF0YSBTdG9yZXM=>> as group2 {
+    database "==Cart Store\n<size:16>[Container: Valkey (Redis-compatible)]</size>\n\nStores cart contents keyed by user." <<Element-RWxlbWVudCxDb250YWluZXIsRGF0YWJhc2U=>> as AstronomyShop.CartStore
+    database "==Astronomy DB\n<size:16>[Container: PostgreSQL]</size>\n\nProduct catalog data and order records." <<Element-RWxlbWVudCxDb250YWluZXIsRGF0YWJhc2U=>> as AstronomyShop.AstronomyDB
+    queue "==Order Bus\n<size:16>[Container: Apache Kafka]</size>\n\nStreams placed-order events to async consumers." <<Element-RWxlbWVudCxDb250YWluZXIsUXVldWU=>> as AstronomyShop.OrderBus
+  }
+
+  rectangle "Edge & Web" <<Group-RWRnZSAmIFdlYg==>> as group3 {
+    rectangle "==Frontend Proxy\n<size:16>[Container: Envoy]</size>\n\nSingle public entrypoint; routes browser traffic to the web app, images, chat, and observability UIs." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.FrontendProxy
+    rectangle "==Frontend\n<size:16>[Container: TypeScript / Next.js]</size>\n\nServer-rendered web store and backend-for-frontend that aggregates the shop services." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Frontend
+    rectangle "==Image Provider\n<size:16>[Container: nginx]</size>\n\nServes static product images." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.ImageProvider
+  }
+
+  rectangle "Order Processing (async)" <<Group-T3JkZXIgUHJvY2Vzc2luZyAoYXN5bmMp>> as group4 {
+    rectangle "==Accounting\n<size:16>[Container: C# / .NET]</size>\n\nRecords placed orders for bookkeeping." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Accounting
+    rectangle "==Fraud Detection\n<size:16>[Container: Kotlin / JVM]</size>\n\nFlags potentially fraudulent orders." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.FraudDetection
+  }
+
+  rectangle "Shop Services" <<Group-U2hvcCBTZXJ2aWNlcw==>> as group5 {
+    rectangle "==Cart\n<size:16>[Container: C# / .NET]</size>\n\nHolds each user's shopping cart." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Cart
+    rectangle "==Checkout\n<size:16>[Container: Go]</size>\n\nOrchestrates order placement across cart, payment, shipping, and email." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Checkout
+    rectangle "==Currency\n<size:16>[Container: C++]</size>\n\nConverts money between currencies." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Currency
+    rectangle "==Product Catalog\n<size:16>[Container: Go]</size>\n\nLists and looks up products." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.ProductCatalog
+    rectangle "==Recommendation\n<size:16>[Container: Python]</size>\n\nSuggests related products." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Recommendation
+    rectangle "==Payment\n<size:16>[Container: Node.js]</size>\n\nCharges the order to a credit card (mock)." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Payment
+    rectangle "==Shipping\n<size:16>[Container: Rust]</size>\n\nCalculates shipping cost and ships the order." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Shipping
+    rectangle "==Quote\n<size:16>[Container: PHP]</size>\n\nComputes shipping-cost quotes." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Quote
+    rectangle "==Email\n<size:16>[Container: Ruby / Sinatra]</size>\n\nSends the order-confirmation email (mock)." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Email
+    rectangle "==Ad\n<size:16>[Container: Java]</size>\n\nReturns contextual ads for a product category." <<Element-RWxlbWVudCxDb250YWluZXI=>> as AstronomyShop.Ad
+  }
+
+}
+
+Customer --> AstronomyShop.FrontendProxy <<Relationship-UmVsYXRpb25zaGlw>> : "Browses, buys, and chats via\n<size:16>[HTTPS]</size>"
+LoadGenerator --> AstronomyShop.FrontendProxy <<Relationship-UmVsYXRpb25zaGlw>> : "Drives synthetic traffic through\n<size:16>[HTTPS / k6]</size>"
+AstronomyShop.FrontendProxy --> AstronomyShop.Frontend <<Relationship-UmVsYXRpb25zaGlw>> : "Routes web & API requests to\n<size:16>[HTTP]</size>"
+AstronomyShop.FrontendProxy --> AstronomyShop.ImageProvider <<Relationship-UmVsYXRpb25zaGlw>> : "Routes product-image requests to\n<size:16>[HTTP]</size>"
+AstronomyShop.FrontendProxy --> AstronomyShop.Chatbot <<Relationship-UmVsYXRpb25zaGlw>> : "Routes chat requests to\n<size:16>[HTTP]</size>"
+AstronomyShop.Frontend --> AstronomyShop.Ad <<Relationship-UmVsYXRpb25zaGlw>> : "Requests contextual ads from\n<size:16>[gRPC]</size>"
+AstronomyShop.Frontend --> AstronomyShop.Cart <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and updates the cart via\n<size:16>[gRPC]</size>"
+AstronomyShop.Frontend --> AstronomyShop.Checkout <<Relationship-UmVsYXRpb25zaGlw>> : "Places orders through\n<size:16>[gRPC]</size>"
+AstronomyShop.Frontend --> AstronomyShop.Currency <<Relationship-UmVsYXRpb25zaGlw>> : "Converts prices via\n<size:16>[gRPC]</size>"
+AstronomyShop.Frontend --> AstronomyShop.ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up products via\n<size:16>[gRPC]</size>"
+AstronomyShop.Frontend --> AstronomyShop.Recommendation <<Relationship-UmVsYXRpb25zaGlw>> : "Requests recommendations from\n<size:16>[gRPC]</size>"
+AstronomyShop.Frontend --> AstronomyShop.Shipping <<Relationship-UmVsYXRpb25zaGlw>> : "Requests shipping quotes from\n<size:16>[HTTP]</size>"
+AstronomyShop.Chatbot --> AstronomyShop.Agent <<Relationship-UmVsYXRpb25zaGlw>> : "Forwards user prompts to\n<size:16>[HTTP]</size>"
+AstronomyShop.Agent --> AstronomyShop.MCPServer <<Relationship-UmVsYXRpb25zaGlw>> : "Invokes shop tools via\n<size:16>[HTTP (MCP)]</size>"
+AstronomyShop.Agent --> LLMAPI <<Relationship-UmVsYXRpb25zaGlw>> : "Sends prompts to\n<size:16>[HTTPS]</size>"
+AstronomyShop.MCPServer --> AstronomyShop.Frontend <<Relationship-UmVsYXRpb25zaGlw>> : "Calls the shop REST API on\n<size:16>[HTTP]</size>"
+AstronomyShop.Checkout --> AstronomyShop.Cart <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and clears the cart via\n<size:16>[gRPC]</size>"
+AstronomyShop.Checkout --> AstronomyShop.Currency <<Relationship-UmVsYXRpb25zaGlw>> : "Converts order totals via\n<size:16>[gRPC]</size>"
+AstronomyShop.Checkout --> AstronomyShop.ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
+AstronomyShop.Checkout --> AstronomyShop.Payment <<Relationship-UmVsYXRpb25zaGlw>> : "Charges the order via\n<size:16>[gRPC]</size>"
+AstronomyShop.Checkout --> AstronomyShop.Shipping <<Relationship-UmVsYXRpb25zaGlw>> : "Ships the order via\n<size:16>[HTTP]</size>"
+AstronomyShop.Checkout --> AstronomyShop.Email <<Relationship-UmVsYXRpb25zaGlw>> : "Sends the confirmation email via\n<size:16>[HTTP]</size>"
+AstronomyShop.Checkout --> AstronomyShop.OrderBus <<Relationship-UmVsYXRpb25zaGlw>> : "Publishes 'orders' events to\n<size:16>[Kafka]</size>"
+AstronomyShop.Recommendation --> AstronomyShop.ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
+AstronomyShop.Shipping --> AstronomyShop.Quote <<Relationship-UmVsYXRpb25zaGlw>> : "Requests shipping cost from\n<size:16>[HTTP]</size>"
+AstronomyShop.Cart --> AstronomyShop.CartStore <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and writes cart state in\n<size:16>[RESP / TCP]</size>"
+AstronomyShop.ProductCatalog --> AstronomyShop.AstronomyDB <<Relationship-UmVsYXRpb25zaGlw>> : "Reads product data from\n<size:16>[SQL]</size>"
+AstronomyShop.Accounting --> AstronomyShop.AstronomyDB <<Relationship-UmVsYXRpb25zaGlw>> : "Writes order records to\n<size:16>[SQL]</size>"
+AstronomyShop.Accounting --> AstronomyShop.OrderBus <<Relationship-UmVsYXRpb25zaGlw>> : "Consumes 'orders' events from\n<size:16>[Kafka]</size>"
+AstronomyShop.FraudDetection --> AstronomyShop.OrderBus <<Relationship-UmVsYXRpb25zaGlw>> : "Consumes 'orders' events from\n<size:16>[Kafka]</size>"
+
+@enduml

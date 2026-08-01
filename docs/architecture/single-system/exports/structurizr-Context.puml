@@ -1,0 +1,84 @@
+@startuml
+title <size:24>System Context View: Astronomy Shop</size>\n<size:24>The Astronomy Shop, its users, and the systems around it.</size>
+
+set separator none
+left to right direction
+skinparam ranksep 20
+skinparam nodesep 5
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Person
+  .Element-RWxlbWVudCxQZXJzb24= {
+    BackgroundColor: #08427b;
+    LineColor: #052e56;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Software System
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0= {
+    BackgroundColor: #1168bd;
+    LineColor: #0b4884;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Software System,External
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw= {
+    BackgroundColor: #8a8a8a;
+    LineColor: #606060;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // Relationship,Telemetry
+  .Relationship-UmVsYXRpb25zaGlwLFRlbGVtZXRyeQ== {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #7a7a7a;
+    FontColor: #7a7a7a;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+</style>
+
+person "==Customer\n<size:16>[Person]</size>\n\nBrowses the product catalog, places orders, and chats with the shopping assistant." <<Element-RWxlbWVudCxQZXJzb24=>> as Customer
+rectangle "==Astronomy Shop\n<size:16>[Software System]</size>\n\nMicroservice-based e-commerce store selling astronomy gear; the reference app for the OpenTelemetry Demo." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as AstronomyShop
+rectangle "==Load Generator\n<size:16>[Software System]</size>\n\nSimulates real users by driving synthetic browsing and checkout traffic." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LoadGenerator
+rectangle "==Observability Backend\n<size:16>[Software System]</size>\n\nOpenTelemetry Collector plus Jaeger, Prometheus, Grafana, and OpenSearch; receives all traces, metrics, and logs." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as ObservabilityBackend
+rectangle "==LLM API\n<size:16>[Software System]</size>\n\nExternal OpenAI-compatible large-language-model endpoint used by the shopping assistant." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LLMAPI
+
+Customer --> AstronomyShop <<Relationship-UmVsYXRpb25zaGlw>> : "Browses, buys, and chats via\n<size:16>[HTTPS]</size>"
+LoadGenerator --> AstronomyShop <<Relationship-UmVsYXRpb25zaGlw>> : "Drives synthetic traffic through\n<size:16>[HTTPS / k6]</size>"
+AstronomyShop --> LLMAPI <<Relationship-UmVsYXRpb25zaGlw>> : "Sends prompts to\n<size:16>[HTTPS]</size>"
+AstronomyShop --> ObservabilityBackend <<Relationship-UmVsYXRpb25zaGlwLFRlbGVtZXRyeQ==>> : "Exports traces, metrics & logs via\n<size:16>[OTLP]</size>"
+
+@enduml
