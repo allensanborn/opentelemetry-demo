@@ -8,6 +8,11 @@ instead of a 22-container wall. Source of truth: [`workspace.dsl`](workspace.dsl
 > An earlier single-system model (one "Astronomy Shop" system containing all ~22 containers) is
 > kept for comparison under [`single-system/`](single-system/). Its container view is the wall of
 > boxes that motivated this decomposition.
+>
+> This landscape lives in **one** workspace (Structurizr's `unscoped` scope). The
+> **decentralized / enterprise** alternative — one workspace per software system, each `extends`ing
+> a shared system catalog, which is what Structurizr recommends once multiple teams own multiple
+> systems — is demonstrated under [`workspaces/`](workspaces/).
 
 ## Why a landscape
 

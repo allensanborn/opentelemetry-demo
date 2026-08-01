@@ -1,0 +1,45 @@
+@startuml
+title <size:24>Container View: Payments</size>\n<size:24>Inside Payment Service.</size>
+
+set separator none
+left to right direction
+skinparam ranksep 20
+skinparam nodesep 5
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Container
+  .Element-RWxlbWVudCxDb250YWluZXI= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Payments
+  .Boundary-UGF5bWVudHM= {
+    BackgroundColor: #ffffff;
+    LineColor: #0b4884;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #1168bd;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+</style>
+
+rectangle "Payments\n<size:16>[Software System]</size>" <<Boundary-UGF5bWVudHM=>> {
+  rectangle "==Payment Service\n<size:16>[Container: Node.js]</size>\n\nCharges the order to a credit card (mock)." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Payments.PaymentService
+}
+
+@enduml

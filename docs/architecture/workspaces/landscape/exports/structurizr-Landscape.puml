@@ -1,0 +1,99 @@
+@startuml
+title <size:24>System Landscape View</size>\n<size:24>Team-aligned system landscape (business systems). Platform excluded for legibility; each team's dependency on the platform is shown in that team's own workspace.</size>
+
+set separator none
+left to right direction
+skinparam ranksep 20
+skinparam nodesep 5
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Person
+  .Element-RWxlbWVudCxQZXJzb24= {
+    BackgroundColor: #08427b;
+    LineColor: #052e56;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Software System
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0= {
+    BackgroundColor: #1168bd;
+    LineColor: #0b4884;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Software System,External
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw= {
+    BackgroundColor: #8a8a8a;
+    LineColor: #606060;
+    LineStyle: 10-10;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+</style>
+
+rectangle "==Storefront\n<size:16>[Software System]</size>\n\nPublic web store and API gateway. (Team: Web)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Storefront
+rectangle "==Notifications\n<size:16>[Software System]</size>\n\nCustomer messaging. (Team: Comms)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Notifications
+rectangle "==Currency\n<size:16>[Software System]</size>\n\nShared currency conversion. (Team: Shared Services)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Currency
+rectangle "==LLM API\n<size:16>[Software System]</size>\n\nThird-party OpenAI-compatible model endpoint." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LLMAPI
+rectangle "==Load Generator\n<size:16>[Software System]</size>\n\nSimulates real users with synthetic traffic (k6)." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LoadGenerator
+person "==Customer\n<size:16>[Person]</size>\n\nBrowses the catalog, places orders, and chats with the shopping assistant." <<Element-RWxlbWVudCxQZXJzb24=>> as Customer
+rectangle "==Shopping Assistant\n<size:16>[Software System]</size>\n\nConversational shopping help backed by an LLM. (Team: AI)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as ShoppingAssistant
+rectangle "==Product Catalog\n<size:16>[Software System]</size>\n\nOwns product data and lookup. (Team: Catalog)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as ProductCatalog
+rectangle "==Recommendations\n<size:16>[Software System]</size>\n\nSuggests related products. (Team: Growth)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Recommendations
+rectangle "==Ads\n<size:16>[Software System]</size>\n\nContextual advertising. (Team: Growth)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Ads
+rectangle "==Cart\n<size:16>[Software System]</size>\n\nOwns the shopping cart. (Team: Cart)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Cart
+rectangle "==Checkout & Orders\n<size:16>[Software System]</size>\n\nOrder placement and the async order lifecycle. (Team: Orders)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as CheckoutOrders
+rectangle "==Payments\n<size:16>[Software System]</size>\n\nCard charging. (Team: Payments)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Payments
+rectangle "==Shipping\n<size:16>[Software System]</size>\n\nShipping cost and fulfilment. (Team: Fulfilment)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Shipping
+
+Customer --> Storefront <<Relationship-UmVsYXRpb25zaGlw>> : "Browses, buys, and chats via\n<size:16>[HTTPS]</size>"
+LoadGenerator --> Storefront <<Relationship-UmVsYXRpb25zaGlw>> : "Drives synthetic traffic through\n<size:16>[HTTPS / k6]</size>"
+Storefront --> ShoppingAssistant <<Relationship-UmVsYXRpb25zaGlw>> : "Routes chat requests to\n<size:16>[HTTP]</size>"
+Storefront --> Ads <<Relationship-UmVsYXRpb25zaGlw>> : "Requests contextual ads from\n<size:16>[gRPC]</size>"
+Storefront --> Cart <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and updates the cart via\n<size:16>[gRPC]</size>"
+Storefront --> CheckoutOrders <<Relationship-UmVsYXRpb25zaGlw>> : "Places orders through\n<size:16>[gRPC]</size>"
+Storefront --> Currency <<Relationship-UmVsYXRpb25zaGlw>> : "Converts prices via\n<size:16>[gRPC]</size>"
+Storefront --> ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up products via\n<size:16>[gRPC]</size>"
+Storefront --> Recommendations <<Relationship-UmVsYXRpb25zaGlw>> : "Requests recommendations from\n<size:16>[gRPC]</size>"
+Storefront --> Shipping <<Relationship-UmVsYXRpb25zaGlw>> : "Requests shipping quotes from\n<size:16>[HTTP]</size>"
+ShoppingAssistant --> Storefront <<Relationship-UmVsYXRpb25zaGlw>> : "Calls the shop REST API on\n<size:16>[HTTP]</size>"
+ShoppingAssistant --> LLMAPI <<Relationship-UmVsYXRpb25zaGlw>> : "Sends prompts to\n<size:16>[HTTPS]</size>"
+CheckoutOrders --> Cart <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and clears the cart via\n<size:16>[gRPC]</size>"
+CheckoutOrders --> Currency <<Relationship-UmVsYXRpb25zaGlw>> : "Converts order totals via\n<size:16>[gRPC]</size>"
+CheckoutOrders --> ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
+CheckoutOrders --> Payments <<Relationship-UmVsYXRpb25zaGlw>> : "Charges the order via\n<size:16>[gRPC]</size>"
+CheckoutOrders --> Shipping <<Relationship-UmVsYXRpb25zaGlw>> : "Ships the order via\n<size:16>[HTTP]</size>"
+CheckoutOrders --> Notifications <<Relationship-UmVsYXRpb25zaGlw>> : "Sends the confirmation email via\n<size:16>[HTTP]</size>"
+Recommendations --> ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
+
+@enduml

@@ -1,0 +1,79 @@
+@startuml
+title <size:24>System Context View: Recommendations</size>\n<size:24>Recommendations and its dependencies.</size>
+
+set separator none
+left to right direction
+skinparam ranksep 20
+skinparam nodesep 5
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Software System
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0= {
+    BackgroundColor: #1168bd;
+    LineColor: #0b4884;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Software System,Platform
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0= {
+    BackgroundColor: #667085;
+    LineColor: #474e5d;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // Relationship,FeatureFlag
+  .Relationship-UmVsYXRpb25zaGlwLEZlYXR1cmVGbGFn {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #7a7a7a;
+    FontColor: #7a7a7a;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // Relationship,Telemetry
+  .Relationship-UmVsYXRpb25zaGlwLFRlbGVtZXRyeQ== {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #7a7a7a;
+    FontColor: #7a7a7a;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+</style>
+
+rectangle "==Feature Flags\n<size:16>[Software System]</size>\n\nFeature-flag evaluation over OpenFeature/OFREP. (Team: Platform)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0=>> as FeatureFlags
+rectangle "==Observability Platform\n<size:16>[Software System]</size>\n\nTelemetry ingest, storage, and dashboards over OTLP. (Team: Platform)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0=>> as ObservabilityPlatform
+rectangle "==Product Catalog\n<size:16>[Software System]</size>\n\nOwns product data and lookup. (Team: Catalog)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as ProductCatalog
+rectangle "==Recommendations\n<size:16>[Software System]</size>\n\nSuggests related products. (Team: Growth)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Recommendations
+
+Recommendations --> ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
+Recommendations --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlwLEZlYXR1cmVGbGFn>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Recommendations --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlwLFRlbGVtZXRyeQ==>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+
+@enduml
