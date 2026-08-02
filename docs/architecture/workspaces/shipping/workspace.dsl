@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element shipping {
             shippingSvc = container "Shipping Service" "Calculates shipping cost and ships the order." "Rust"
             quote       = container "Quote Service" "Computes shipping-cost quotes." "PHP"

@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element obsPlatform {
             collector  = container "OTel Collector" "Receives OTLP; fans out to the backends." "OpenTelemetry Collector"
             jaeger     = container "Jaeger" "Trace storage & UI." "Jaeger"

@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element assistant {
             chatbot = container "Chatbot" "Chat UI for the assistant." "Python / FastAPI"
             agent   = container "Agent" "LLM agent; calls shop tools and an external model." "Python / LangChain + LangGraph"

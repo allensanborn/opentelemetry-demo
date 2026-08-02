@@ -44,6 +44,18 @@ hide stereotype
     Shadowing: 0;
     MaximumWidth: 200;
   }
+  // Element,Software System,Platform
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0= {
+    BackgroundColor: #667085;
+    LineColor: #474e5d;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 200;
+  }
   // Relationship
   .Relationship-UmVsYXRpb25zaGlw {
     LineThickness: 2;
@@ -66,6 +78,8 @@ person "==Person" <<Element-RWxlbWVudCxQZXJzb24=>>
 rectangle "==Software System" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>>
 
 rectangle "==Software System, External" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>>
+
+rectangle "==Software System, Platform" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0=>>
 
 rectangle "." <<.Element-Transparent>> as 1
 1 --> 1 <<Relationship-UmVsYXRpb25zaGlw>> : "Relationship"

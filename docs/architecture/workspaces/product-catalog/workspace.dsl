@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element catalog {
             productCatalog = container "Product Catalog Service" "Lists and looks up products." "Go"
             catalogDb      = container "Catalog DB" "Product data — the catalog schema/database this team owns." "PostgreSQL" "Database"

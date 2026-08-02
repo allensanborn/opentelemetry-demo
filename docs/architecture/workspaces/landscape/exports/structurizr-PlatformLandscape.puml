@@ -1,5 +1,5 @@
 @startuml
-title <size:24>System Landscape View</size>\n<size:24>Generated from the per-system workspaces. Platform excluded for legibility.</size>
+title <size:24>System Landscape View</size>\n<size:24>Full generated landscape including the shared Platform systems.</size>
 
 set separator none
 left to right direction
@@ -48,6 +48,18 @@ hide stereotype
     Shadowing: 0;
     MaximumWidth: 450;
   }
+  // Element,Software System,Platform
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0= {
+    BackgroundColor: #667085;
+    LineColor: #474e5d;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
   // Relationship
   .Relationship-UmVsYXRpb25zaGlw {
     LineThickness: 2;
@@ -62,6 +74,8 @@ hide stereotype
 rectangle "==Storefront\n<size:16>[Software System]</size>\n\nPublic web store and API gateway. (Team: Web)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Storefront [[{workspace:0}/diagrams]]
 rectangle "==Notifications\n<size:16>[Software System]</size>\n\nCustomer messaging. (Team: Comms)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Notifications [[{workspace:0}/diagrams]]
 rectangle "==Currency\n<size:16>[Software System]</size>\n\nShared currency conversion. (Team: Shared Services)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Currency [[{workspace:0}/diagrams]]
+rectangle "==Feature Flags\n<size:16>[Software System]</size>\n\nFeature-flag evaluation over OpenFeature/OFREP. (Team: Platform)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0=>> as FeatureFlags [[{workspace:0}/diagrams]]
+rectangle "==Observability Platform\n<size:16>[Software System]</size>\n\nTelemetry ingest, storage, and dashboards over OTLP. (Team: Platform)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0=>> as ObservabilityPlatform [[{workspace:0}/diagrams]]
 rectangle "==LLM API\n<size:16>[Software System]</size>\n\nThird-party OpenAI-compatible model endpoint." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LLMAPI
 rectangle "==Load Generator\n<size:16>[Software System]</size>\n\nSimulates real users with synthetic traffic (k6)." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sRXh0ZXJuYWw=>> as LoadGenerator
 person "==Customer\n<size:16>[Person]</size>\n\nBrowses the catalog, places orders, and chats." <<Element-RWxlbWVudCxQZXJzb24=>> as Customer
@@ -74,15 +88,35 @@ rectangle "==Checkout & Orders\n<size:16>[Software System]</size>\n\nOrder place
 rectangle "==Payments\n<size:16>[Software System]</size>\n\nCard charging. (Team: Payments)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Payments [[{workspace:0}/diagrams]]
 rectangle "==Shipping\n<size:16>[Software System]</size>\n\nShipping cost and fulfilment. (Team: Fulfilment)" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as Shipping [[{workspace:0}/diagrams]]
 
+Ads --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Ads --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+Cart --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Cart --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
 CheckoutOrders --> Cart <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and clears the cart via\n<size:16>[gRPC]</size>"
 CheckoutOrders --> Currency <<Relationship-UmVsYXRpb25zaGlw>> : "Converts order totals via\n<size:16>[gRPC]</size>"
 CheckoutOrders --> ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
 CheckoutOrders --> Payments <<Relationship-UmVsYXRpb25zaGlw>> : "Charges the order via\n<size:16>[gRPC]</size>"
 CheckoutOrders --> Shipping <<Relationship-UmVsYXRpb25zaGlw>> : "Ships the order via\n<size:16>[HTTP]</size>"
 CheckoutOrders --> Notifications <<Relationship-UmVsYXRpb25zaGlw>> : "Sends the confirmation email via\n<size:16>[HTTP]</size>"
+CheckoutOrders --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+CheckoutOrders --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+Currency --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Currency --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+FeatureFlags --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+Notifications --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Notifications --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+Payments --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Payments --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+ProductCatalog --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+ProductCatalog --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
 Recommendations --> ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
+Recommendations --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Recommendations --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
+Shipping --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Shipping --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
 ShoppingAssistant --> LLMAPI <<Relationship-UmVsYXRpb25zaGlw>> : "Sends prompts to\n<size:16>[HTTPS]</size>"
 ShoppingAssistant --> Storefront <<Relationship-UmVsYXRpb25zaGlw>> : "Calls the shop REST API on\n<size:16>[HTTP]</size>"
+ShoppingAssistant --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
 Storefront --> ShoppingAssistant <<Relationship-UmVsYXRpb25zaGlw>> : "Routes chat requests to\n<size:16>[HTTP]</size>"
 Storefront --> Ads <<Relationship-UmVsYXRpb25zaGlw>> : "Requests contextual ads from\n<size:16>[gRPC]</size>"
 Storefront --> Cart <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and updates the cart via\n<size:16>[gRPC]</size>"
@@ -91,6 +125,8 @@ Storefront --> Currency <<Relationship-UmVsYXRpb25zaGlw>> : "Converts prices via
 Storefront --> ProductCatalog <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up products via\n<size:16>[gRPC]</size>"
 Storefront --> Recommendations <<Relationship-UmVsYXRpb25zaGlw>> : "Requests recommendations from\n<size:16>[gRPC]</size>"
 Storefront --> Shipping <<Relationship-UmVsYXRpb25zaGlw>> : "Requests shipping quotes from\n<size:16>[HTTP]</size>"
+Storefront --> FeatureFlags <<Relationship-UmVsYXRpb25zaGlw>> : "Evaluates feature flags via\n<size:16>[gRPC / OFREP]</size>"
+Storefront --> ObservabilityPlatform <<Relationship-UmVsYXRpb25zaGlw>> : "Exports telemetry via\n<size:16>[OTLP]</size>"
 Customer --> Storefront <<Relationship-UmVsYXRpb25zaGlw>> : "Browses, buys, and chats via\n<size:16>[HTTPS]</size>"
 LoadGenerator --> Storefront <<Relationship-UmVsYXRpb25zaGlw>> : "Drives synthetic traffic through\n<size:16>[HTTPS / k6]</size>"
 

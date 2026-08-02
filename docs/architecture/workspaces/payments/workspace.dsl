@@ -1,5 +1,6 @@
 workspace extends ../system-catalog/workspace.dsl {
     model {
+        !impliedRelationships true
         !element payments {
             payment = container "Payment Service" "Charges the order to a credit card (mock)." "Node.js"
         }

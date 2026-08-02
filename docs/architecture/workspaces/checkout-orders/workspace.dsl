@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element orders {
             checkout       = container "Checkout Service" "Orchestrates order placement across cart, payment, shipping, and email." "Go"
             accounting     = container "Accounting Service" "Records placed orders for bookkeeping." "C# / .NET"

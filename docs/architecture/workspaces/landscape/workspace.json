@@ -1,0 +1,961 @@
+{
+  "configuration": {
+    "scope": "Landscape"
+  },
+  "documentation": {},
+  "id": 0,
+  "model": {
+    "people": [
+      {
+        "description": "Browses the catalog, places orders, and chats.",
+        "id": "16",
+        "name": "Customer",
+        "properties": {
+          "structurizr.dsl.identifier": "customer"
+        },
+        "relationships": [
+          {
+            "description": "Browses, buys, and chats via",
+            "destinationId": "1",
+            "id": "56",
+            "sourceId": "16",
+            "tags": "Relationship",
+            "technology": "HTTPS"
+          }
+        ],
+        "tags": "Element,Person"
+      }
+    ],
+    "softwareSystems": [
+      {
+        "description": "Public web store and API gateway. (Team: Web)",
+        "documentation": {},
+        "id": "1",
+        "name": "Storefront",
+        "properties": {
+          "structurizr.dsl.identifier": "storefront"
+        },
+        "relationships": [
+          {
+            "description": "Routes chat requests to",
+            "destinationId": "2",
+            "id": "46",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "HTTP"
+          },
+          {
+            "description": "Requests contextual ads from",
+            "destinationId": "5",
+            "id": "47",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Reads and updates the cart via",
+            "destinationId": "6",
+            "id": "48",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Places orders through",
+            "destinationId": "7",
+            "id": "49",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Converts prices via",
+            "destinationId": "11",
+            "id": "50",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Looks up products via",
+            "destinationId": "3",
+            "id": "51",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Requests recommendations from",
+            "destinationId": "4",
+            "id": "52",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Requests shipping quotes from",
+            "destinationId": "9",
+            "id": "53",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "HTTP"
+          },
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "54",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "55",
+            "sourceId": "1",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Conversational shopping help backed by an LLM. (Team: AI)",
+        "documentation": {},
+        "id": "2",
+        "name": "Shopping Assistant",
+        "properties": {
+          "structurizr.dsl.identifier": "assistant"
+        },
+        "relationships": [
+          {
+            "description": "Sends prompts to",
+            "destinationId": "14",
+            "id": "43",
+            "sourceId": "2",
+            "tags": "Relationship",
+            "technology": "HTTPS"
+          },
+          {
+            "description": "Calls the shop REST API on",
+            "destinationId": "1",
+            "id": "44",
+            "sourceId": "2",
+            "tags": "Relationship",
+            "technology": "HTTP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "45",
+            "sourceId": "2",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Owns product data and lookup. (Team: Catalog)",
+        "documentation": {},
+        "id": "3",
+        "name": "Product Catalog",
+        "properties": {
+          "structurizr.dsl.identifier": "catalog"
+        },
+        "relationships": [
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "36",
+            "sourceId": "3",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "37",
+            "sourceId": "3",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Suggests related products. (Team: Growth)",
+        "documentation": {},
+        "id": "4",
+        "name": "Recommendations",
+        "properties": {
+          "structurizr.dsl.identifier": "recommendations"
+        },
+        "relationships": [
+          {
+            "description": "Looks up product details via",
+            "destinationId": "3",
+            "id": "38",
+            "sourceId": "4",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "39",
+            "sourceId": "4",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "40",
+            "sourceId": "4",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Contextual advertising. (Team: Growth)",
+        "documentation": {},
+        "id": "5",
+        "name": "Ads",
+        "properties": {
+          "structurizr.dsl.identifier": "ads"
+        },
+        "relationships": [
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "17",
+            "sourceId": "5",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "18",
+            "sourceId": "5",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Owns the shopping cart. (Team: Cart)",
+        "documentation": {},
+        "id": "6",
+        "name": "Cart",
+        "properties": {
+          "structurizr.dsl.identifier": "cart"
+        },
+        "relationships": [
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "19",
+            "sourceId": "6",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "20",
+            "sourceId": "6",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Order placement and the async order lifecycle. (Team: Orders)",
+        "documentation": {},
+        "id": "7",
+        "name": "Checkout & Orders",
+        "properties": {
+          "structurizr.dsl.identifier": "orders"
+        },
+        "relationships": [
+          {
+            "description": "Reads and clears the cart via",
+            "destinationId": "6",
+            "id": "21",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Converts order totals via",
+            "destinationId": "11",
+            "id": "22",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Looks up product details via",
+            "destinationId": "3",
+            "id": "23",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Charges the order via",
+            "destinationId": "8",
+            "id": "24",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "gRPC"
+          },
+          {
+            "description": "Ships the order via",
+            "destinationId": "9",
+            "id": "25",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "HTTP"
+          },
+          {
+            "description": "Sends the confirmation email via",
+            "destinationId": "10",
+            "id": "26",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "HTTP"
+          },
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "27",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "28",
+            "sourceId": "7",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Card charging. (Team: Payments)",
+        "documentation": {},
+        "id": "8",
+        "name": "Payments",
+        "properties": {
+          "structurizr.dsl.identifier": "payments"
+        },
+        "relationships": [
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "34",
+            "sourceId": "8",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "35",
+            "sourceId": "8",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Shipping cost and fulfilment. (Team: Fulfilment)",
+        "documentation": {},
+        "id": "9",
+        "name": "Shipping",
+        "properties": {
+          "structurizr.dsl.identifier": "shipping"
+        },
+        "relationships": [
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "41",
+            "sourceId": "9",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "42",
+            "sourceId": "9",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Customer messaging. (Team: Comms)",
+        "documentation": {},
+        "id": "10",
+        "name": "Notifications",
+        "properties": {
+          "structurizr.dsl.identifier": "notifications"
+        },
+        "relationships": [
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "32",
+            "sourceId": "10",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "33",
+            "sourceId": "10",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Shared currency conversion. (Team: Shared Services)",
+        "documentation": {},
+        "id": "11",
+        "name": "Currency",
+        "properties": {
+          "structurizr.dsl.identifier": "currency"
+        },
+        "relationships": [
+          {
+            "description": "Evaluates feature flags via",
+            "destinationId": "12",
+            "id": "29",
+            "sourceId": "11",
+            "tags": "Relationship",
+            "technology": "gRPC / OFREP"
+          },
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "30",
+            "sourceId": "11",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Feature-flag evaluation over OpenFeature/OFREP. (Team: Platform)",
+        "documentation": {},
+        "id": "12",
+        "name": "Feature Flags",
+        "properties": {
+          "structurizr.dsl.identifier": "flagSystem"
+        },
+        "relationships": [
+          {
+            "description": "Exports telemetry via",
+            "destinationId": "13",
+            "id": "31",
+            "sourceId": "12",
+            "tags": "Relationship",
+            "technology": "OTLP"
+          }
+        ],
+        "tags": "Element,Software System,Platform",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Telemetry ingest, storage, and dashboards over OTLP. (Team: Platform)",
+        "documentation": {},
+        "id": "13",
+        "name": "Observability Platform",
+        "properties": {
+          "structurizr.dsl.identifier": "obsPlatform"
+        },
+        "tags": "Element,Software System,Platform",
+        "url": "{workspace:0}/diagrams"
+      },
+      {
+        "description": "Third-party OpenAI-compatible model endpoint.",
+        "documentation": {},
+        "id": "14",
+        "name": "LLM API",
+        "properties": {
+          "structurizr.dsl.identifier": "llm"
+        },
+        "tags": "Element,Software System,External"
+      },
+      {
+        "description": "Simulates real users with synthetic traffic (k6).",
+        "documentation": {},
+        "id": "15",
+        "name": "Load Generator",
+        "properties": {
+          "structurizr.dsl.identifier": "loadgen"
+        },
+        "relationships": [
+          {
+            "description": "Drives synthetic traffic through",
+            "destinationId": "1",
+            "id": "57",
+            "sourceId": "15",
+            "tags": "Relationship",
+            "technology": "HTTPS / k6"
+          }
+        ],
+        "tags": "Element,Software System,External"
+      }
+    ]
+  },
+  "name": "System Landscape",
+  "views": {
+    "configuration": {
+      "styles": {
+        "elements": [
+          {
+            "tag": "Software System",
+            "background": "#1168bd",
+            "color": "#ffffff"
+          },
+          {
+            "tag": "Person",
+            "background": "#08427b",
+            "color": "#ffffff",
+            "shape": "Person"
+          },
+          {
+            "tag": "External",
+            "background": "#8a8a8a",
+            "color": "#ffffff",
+            "border": "Dashed"
+          },
+          {
+            "tag": "Platform",
+            "background": "#667085",
+            "color": "#ffffff"
+          },
+          {
+            "tag": "Database",
+            "shape": "Cylinder"
+          },
+          {
+            "tag": "Queue",
+            "shape": "Pipe"
+          }
+        ],
+        "relationships": [
+          {
+            "tag": "Telemetry",
+            "color": "#7a7a7a",
+            "dashed": true
+          },
+          {
+            "tag": "FeatureFlag",
+            "color": "#7a7a7a",
+            "dashed": true
+          }
+        ]
+      },
+      "terminology": {}
+    },
+    "systemLandscapeViews": [
+      {
+        "key": "Landscape",
+        "name": "System Landscape",
+        "description": "Generated from the per-system workspaces. Platform excluded for legibility.",
+        "order": 1,
+        "elements": [
+          {
+            "id": "1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "10",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "11",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "14",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "15",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "16",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "2",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "3",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "4",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "5",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "6",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "7",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "8",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "9",
+            "x": 0,
+            "y": 0
+          }
+        ],
+        "relationships": [
+          {
+            "id": "46"
+          },
+          {
+            "id": "47"
+          },
+          {
+            "id": "48"
+          },
+          {
+            "id": "49"
+          },
+          {
+            "id": "50"
+          },
+          {
+            "id": "51"
+          },
+          {
+            "id": "52"
+          },
+          {
+            "id": "53"
+          },
+          {
+            "id": "43"
+          },
+          {
+            "id": "44"
+          },
+          {
+            "id": "38"
+          },
+          {
+            "id": "21"
+          },
+          {
+            "id": "22"
+          },
+          {
+            "id": "23"
+          },
+          {
+            "id": "24"
+          },
+          {
+            "id": "25"
+          },
+          {
+            "id": "26"
+          },
+          {
+            "id": "57"
+          },
+          {
+            "id": "56"
+          }
+        ],
+        "automaticLayout": {
+          "edgeSeparation": 50,
+          "nodeSeparation": 50,
+          "rankDirection": "LeftRight",
+          "rankSeparation": 100,
+          "vertices": false
+        },
+        "enterpriseBoundaryVisible": true
+      },
+      {
+        "key": "PlatformLandscape",
+        "name": "System Landscape (with Platform)",
+        "description": "Full generated landscape including the shared Platform systems.",
+        "order": 2,
+        "elements": [
+          {
+            "id": "1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "10",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "11",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "12",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "13",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "14",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "15",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "16",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "2",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "3",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "4",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "5",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "6",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "7",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "8",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "9",
+            "x": 0,
+            "y": 0
+          }
+        ],
+        "relationships": [
+          {
+            "id": "46"
+          },
+          {
+            "id": "47"
+          },
+          {
+            "id": "48"
+          },
+          {
+            "id": "49"
+          },
+          {
+            "id": "50"
+          },
+          {
+            "id": "51"
+          },
+          {
+            "id": "52"
+          },
+          {
+            "id": "53"
+          },
+          {
+            "id": "54"
+          },
+          {
+            "id": "55"
+          },
+          {
+            "id": "43"
+          },
+          {
+            "id": "44"
+          },
+          {
+            "id": "45"
+          },
+          {
+            "id": "36"
+          },
+          {
+            "id": "37"
+          },
+          {
+            "id": "38"
+          },
+          {
+            "id": "39"
+          },
+          {
+            "id": "40"
+          },
+          {
+            "id": "17"
+          },
+          {
+            "id": "18"
+          },
+          {
+            "id": "19"
+          },
+          {
+            "id": "20"
+          },
+          {
+            "id": "21"
+          },
+          {
+            "id": "22"
+          },
+          {
+            "id": "23"
+          },
+          {
+            "id": "24"
+          },
+          {
+            "id": "25"
+          },
+          {
+            "id": "26"
+          },
+          {
+            "id": "27"
+          },
+          {
+            "id": "28"
+          },
+          {
+            "id": "34"
+          },
+          {
+            "id": "35"
+          },
+          {
+            "id": "41"
+          },
+          {
+            "id": "42"
+          },
+          {
+            "id": "32"
+          },
+          {
+            "id": "33"
+          },
+          {
+            "id": "29"
+          },
+          {
+            "id": "30"
+          },
+          {
+            "id": "31"
+          },
+          {
+            "id": "57"
+          },
+          {
+            "id": "56"
+          }
+        ],
+        "automaticLayout": {
+          "edgeSeparation": 50,
+          "nodeSeparation": 50,
+          "rankDirection": "LeftRight",
+          "rankSeparation": 100,
+          "vertices": false
+        },
+        "enterpriseBoundaryVisible": true
+      }
+    ]
+  }
+}

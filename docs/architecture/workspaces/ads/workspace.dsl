@@ -1,5 +1,6 @@
 workspace extends ../system-catalog/workspace.dsl {
     model {
+        !impliedRelationships true
         !element ads {
             ad = container "Ad Service" "Returns contextual ads for a product category." "Java"
         }

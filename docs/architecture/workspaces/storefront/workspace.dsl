@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element storefront {
             proxy         = container "Frontend Proxy" "Single public entrypoint; routes browser traffic." "Envoy"
             frontend      = container "Frontend" "Web store + backend-for-frontend aggregating the shop services." "TypeScript / Next.js"

@@ -41,26 +41,50 @@ workspaces/
 ├── currency/              │
 ├── feature-flags/         │  ← platform systems get their own workspace too
 ├── observability-platform/┘
-└── landscape/             the system landscape (see the caveat below)
+└── landscape/             the system landscape — GENERATED, not hand-authored:
+    ├── generate-landscape.sh    the pipeline (generate → stylize → render)
+    ├── stylize.py               post-processor (adds styles + views)
+    ├── workspace.json           the generated, styled landscape
+    └── exports/                 rendered PNG/SVG
 ```
 
 Each `<system>/workspace.dsl` starts with `workspace extends ../system-catalog/workspace.dsl`,
 references other systems by their catalog identifier, and `!include`s the shared styles. Images
 are in each `<system>/exports/`.
 
+## Generating the landscape (no server, no license)
+
+The landscape is **generated from the per-system workspaces** — the whole point of the
+decentralized model. `./landscape/generate-landscape.sh` runs the pipeline:
+
+```
+structurizr generate system-landscape   merges the per-system models and DERIVES the
+   -i <workspaces> -o _generated.json    system→system edges from each team's container
+                                         relationships (needs !impliedRelationships true
+                                         in each workspace so container→system rolls up)
+  → stylize.py                           the generated model has no views/styles; this
+                                         injects the shared styles + a clean landscape
+                                         view (Platform excluded) and a full one
+  → structurizr export + plantuml        render PNG/SVG
+```
+
+Re-run it whenever a team's workspace changes; the landscape edges are never hand-maintained.
+
+**What needs a licensed server vs. what doesn't:** `generate`, `export`, `merge`, `validate`,
+`inspect` are **local CLI commands** — no server, no license. Only the *hosted collaboration*
+features — `server` (the on-premises UI/API), and `create`/`push`/`pull` against it — require a
+**commercial Structurizr license** (the `server` container exits with "No license found"
+otherwise). So a team publishing each workspace to a shared server and pulling a live landscape
+is the licensed path; the **local generate pipeline above reproduces the same landscape offline**.
+
 ## How it maps to the real Structurizr enterprise workflow
 
-| Real enterprise setup | What we do here (no server) |
+| Real (licensed-server) enterprise setup | What we do here (local, license-free) |
 |---|---|
-| Each team's workspace lives in its **own repo**, published to a Structurizr server | All workspaces live in this one folder (it's a demo) |
+| Each team's workspace lives in its **own repo**, `push`ed to a Structurizr server | All workspaces live in this one folder (it's a demo) |
 | System catalog published at a stable **HTTPS URL**, workspaces `extends` the URL | Workspaces `extends` the catalog by **relative path** |
-| Landscape is **generated**: `structurizr pull` all workspaces → `generate system-landscape` (derives system→system edges from each team's container edges) → `push` | `landscape/workspace.dsl` is **hand-authored** — it re-declares the aggregated system→system edges. This duplication is exactly what the generator removes. |
-| Cross-cutting fan-in (every system → the platform) is aggregated automatically | Each system declares its **own** telemetry/flag edge in its workspace; the clean landscape excludes the platform |
-
-**The key tradeoff this makes concrete:** decentralization buys clear per-team ownership and
-small, legible workspaces — at the cost of a landscape you either **generate with a server** or
-**hand-maintain**. With only the local export CLI there is no `generate system-landscape`, so the
-landscape here is a hand-authored stand-in.
+| Landscape built by `pull` all workspaces → `generate system-landscape` → `push` | Same `generate system-landscape`, but run **directly on the local files** (`-i`/`-o`) — see the pipeline above |
+| Cross-cutting fan-in (every system → the platform) aggregated automatically | Each system declares its **own** platform edge; `generate` aggregates them; the clean view excludes the platform |
 
 ## Rendering / browsing
 

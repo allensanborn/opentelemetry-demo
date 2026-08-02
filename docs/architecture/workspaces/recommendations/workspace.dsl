@@ -1,5 +1,6 @@
 workspace extends ../system-catalog/workspace.dsl {
     model {
+        !impliedRelationships true
         !element recommendations {
             recommendation = container "Recommendation Service" "Computes product recommendations." "Python"
         }

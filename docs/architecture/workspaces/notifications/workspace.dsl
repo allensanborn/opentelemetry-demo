@@ -1,5 +1,6 @@
 workspace extends ../system-catalog/workspace.dsl {
     model {
+        !impliedRelationships true
         !element notifications {
             email = container "Email Service" "Sends the order-confirmation email (mock)." "Ruby / Sinatra"
         }

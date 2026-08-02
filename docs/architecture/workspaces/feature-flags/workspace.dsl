@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element flagSystem {
             flagd   = container "flagd" "Evaluates feature flags over OpenFeature." "Go / OpenFeature"
             flagdUi = container "flagd UI" "Edits flag definitions." "Elixir / Phoenix"

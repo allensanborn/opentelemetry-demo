@@ -1,5 +1,6 @@
 workspace extends ../system-catalog/workspace.dsl {
     model {
+        !impliedRelationships true
         !element currency {
             currencySvc = container "Currency Service" "Converts money between currencies." "C++"
         }

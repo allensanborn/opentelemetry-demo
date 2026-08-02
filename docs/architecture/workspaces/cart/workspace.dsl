@@ -1,6 +1,7 @@
 workspace extends ../system-catalog/workspace.dsl {
 
     model {
+        !impliedRelationships true
         !element cart {
             cartSvc   = container "Cart Service" "Holds each user's shopping cart." "C# / .NET"
             cartStore = container "Cart Store" "Cart contents keyed by user." "Valkey (Redis-compatible)" "Database"
