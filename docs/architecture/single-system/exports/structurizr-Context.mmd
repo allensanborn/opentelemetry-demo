@@ -1,0 +1,23 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["System Context View: Astronomy Shop"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Customer</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Browses the product catalog,<br />places orders, and chats with<br />the shopping assistant.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    2("<div style='font-weight: bold'>Astronomy Shop</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Microservice-based e-commerce<br />store selling astronomy gear;<br />the reference app for the<br />OpenTelemetry Demo.</div>")
+    style 2 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    25("<div style='font-weight: bold'>Load Generator</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Simulates real users by<br />driving synthetic browsing<br />and checkout traffic.</div>")
+    style 25 fill:#8a8a8a,stroke:#606060,color:#ffffff
+    26("<div style='font-weight: bold'>Observability Backend</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>OpenTelemetry Collector plus<br />Jaeger, Prometheus, Grafana,<br />and OpenSearch; receives all<br />traces, metrics, and logs.</div>")
+    style 26 fill:#8a8a8a,stroke:#606060,color:#ffffff
+    27("<div style='font-weight: bold'>LLM API</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>External OpenAI-compatible<br />large-language-model endpoint<br />used by the shopping<br />assistant.</div>")
+    style 27 fill:#8a8a8a,stroke:#606060,color:#ffffff
+
+    1-. "<div>Browses, buys, and chats via</div><div style='font-size: 70%'>[HTTPS]</div>" .->2
+    25-. "<div>Drives synthetic traffic<br />through</div><div style='font-size: 70%'>[HTTPS / k6]</div>" .->2
+    2-. "<div>Sends prompts to</div><div style='font-size: 70%'>[HTTPS]</div>" .->27
+    2-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+
+  end

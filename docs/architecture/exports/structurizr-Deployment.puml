@@ -1,0 +1,163 @@
+@startuml
+title <size:24>Deployment View: Production</size>\n<size:24>Where containers actually run. Note the astronomy-db node: Catalog DB and Accounting DB are separate schemas co-located on one Postgres instance — a physical fact the static container views deliberately hide. Cross-cutting telemetry/feature-flag edges are omitted for clarity.</size>
+
+set separator none
+left to right direction
+skinparam ranksep 20
+skinparam nodesep 5
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element
+  .Element-RWxlbWVudA== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Container
+  .Element-RWxlbWVudCxDb250YWluZXI= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Container,Database
+  .Element-RWxlbWVudCxDb250YWluZXIsRGF0YWJhc2U= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Container,Queue
+  .Element-RWxlbWVudCxDb250YWluZXIsUXVldWU= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // Element
+  .DeploymentNode-RWxlbWVudA== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+</style>
+
+rectangle "Kubernetes Cluster\n<size:16>[Deployment Node: Kubernetes]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster {
+  rectangle "==Ingress / Load Balancer\n<size:16>[Infrastructure Node: Cloud LB]</size>\n\nCluster entrypoint; terminates TLS and routes to the storefront." <<Element-RWxlbWVudA==>> as Production.KubernetesCluster.IngressLoadBalancer
+  rectangle "Stream-aligned workloads\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Streamalignedworkloads {
+    rectangle "Storefront pod\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Streamalignedworkloads.Storefrontpod {
+      rectangle "==Frontend\n<size:16>[Container: TypeScript / Next.js]</size>\n\nWeb store + backend-for-frontend aggregating the shop services." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.Streamalignedworkloads.Storefrontpod.Frontend_1
+    }
+
+    rectangle "Checkout & Orders pod\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod {
+      rectangle "==Checkout Service\n<size:16>[Container: Go]</size>\n\nOrchestrates order placement across cart, payment, shipping, and email." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.CheckoutService_1
+      rectangle "==Accounting Service\n<size:16>[Container: C# / .NET]</size>\n\nRecords placed orders for bookkeeping." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.AccountingService_1
+    }
+
+    rectangle "Product Catalog pod\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Streamalignedworkloads.ProductCatalogpod {
+      rectangle "==Product Catalog Service\n<size:16>[Container: Go]</size>\n\nLists and looks up products." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.Streamalignedworkloads.ProductCatalogpod.ProductCatalogService_1
+    }
+
+    rectangle "Cart pod\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Streamalignedworkloads.Cartpod {
+      rectangle "==Cart Service\n<size:16>[Container: C# / .NET]</size>\n\nHolds each user's shopping cart." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.Streamalignedworkloads.Cartpod.CartService_1
+    }
+
+  }
+
+  rectangle "Stateful services\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Statefulservices {
+    rectangle "astronomy-db — one PostgreSQL instance\n<size:16>[Deployment Node: PostgreSQL]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Statefulservices.astronomydbonePostgreSQLinstance {
+      database "==Catalog DB\n<size:16>[Container: PostgreSQL]</size>\n\nProduct data — the catalog schema/database this team owns and deploys independently." <<Element-RWxlbWVudCxDb250YWluZXIsRGF0YWJhc2U=>> as Production.KubernetesCluster.Statefulservices.astronomydbonePostgreSQLinstance.CatalogDB_1
+      database "==Accounting DB\n<size:16>[Container: PostgreSQL]</size>\n\nOrder records — the accounting schema/database this team owns and deploys independently." <<Element-RWxlbWVudCxDb250YWluZXIsRGF0YWJhc2U=>> as Production.KubernetesCluster.Statefulservices.astronomydbonePostgreSQLinstance.AccountingDB_1
+    }
+
+    rectangle "valkey\n<size:16>[Deployment Node: Valkey]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Statefulservices.valkey {
+      database "==Cart Store\n<size:16>[Container: Valkey (Redis-compatible)]</size>\n\nCart contents keyed by user." <<Element-RWxlbWVudCxDb250YWluZXIsRGF0YWJhc2U=>> as Production.KubernetesCluster.Statefulservices.valkey.CartStore_1
+    }
+
+    rectangle "kafka\n<size:16>[Deployment Node: Apache Kafka]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.Statefulservices.kafka {
+      queue "==Order Bus\n<size:16>[Container: Apache Kafka]</size>\n\nStreams placed-order events to the async consumers (topic: orders)." <<Element-RWxlbWVudCxDb250YWluZXIsUXVldWU=>> as Production.KubernetesCluster.Statefulservices.kafka.OrderBus_1
+    }
+
+  }
+
+  rectangle "Platform (Platform team; self-hosted, swappable for a SaaS backend)\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend {
+    rectangle "OTLP gateway\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.OTLPgateway {
+      rectangle "==OTel Collector\n<size:16>[Container: OpenTelemetry Collector]</size>\n\nReceives OTLP; fans out to the backends." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.OTLPgateway.OTelCollector_1
+    }
+
+    rectangle "Telemetry backends\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends {
+      rectangle "==Jaeger\n<size:16>[Container: Jaeger]</size>\n\nTrace storage & UI." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Jaeger_1
+      rectangle "==Prometheus\n<size:16>[Container: Prometheus]</size>\n\nMetrics storage." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Prometheus_1
+      rectangle "==OpenSearch\n<size:16>[Container: OpenSearch]</size>\n\nLog & trace storage." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.OpenSearch_1
+      rectangle "==Grafana\n<size:16>[Container: Grafana]</size>\n\nDashboards over metrics, traces, and logs." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Grafana_1
+    }
+
+    rectangle "Feature-flag service\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Featureflagservice {
+      rectangle "==flagd\n<size:16>[Container: Go / OpenFeature]</size>\n\nEvaluates feature flags over OpenFeature." <<Element-RWxlbWVudCxDb250YWluZXI=>> as Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Featureflagservice.flagd_1
+    }
+
+  }
+
+}
+
+Production.KubernetesCluster.Streamalignedworkloads.Storefrontpod.Frontend_1 --> Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.CheckoutService_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Places orders through\n<size:16>[gRPC]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.Storefrontpod.Frontend_1 --> Production.KubernetesCluster.Streamalignedworkloads.ProductCatalogpod.ProductCatalogService_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up products via\n<size:16>[gRPC]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.CheckoutService_1 --> Production.KubernetesCluster.Streamalignedworkloads.ProductCatalogpod.ProductCatalogService_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Looks up product details via\n<size:16>[gRPC]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.Storefrontpod.Frontend_1 --> Production.KubernetesCluster.Streamalignedworkloads.Cartpod.CartService_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and updates the cart via\n<size:16>[gRPC]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.CheckoutService_1 --> Production.KubernetesCluster.Streamalignedworkloads.Cartpod.CartService_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and clears the cart via\n<size:16>[gRPC]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.ProductCatalogpod.ProductCatalogService_1 --> Production.KubernetesCluster.Statefulservices.astronomydbonePostgreSQLinstance.CatalogDB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Reads product data from\n<size:16>[SQL]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.AccountingService_1 --> Production.KubernetesCluster.Statefulservices.astronomydbonePostgreSQLinstance.AccountingDB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Writes order records to\n<size:16>[SQL]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.Cartpod.CartService_1 --> Production.KubernetesCluster.Statefulservices.valkey.CartStore_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and writes cart state in\n<size:16>[RESP / TCP]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.CheckoutService_1 --> Production.KubernetesCluster.Statefulservices.kafka.OrderBus_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Publishes 'orders' events to\n<size:16>[Kafka]</size>"
+Production.KubernetesCluster.Streamalignedworkloads.CheckoutOrderspod.AccountingService_1 --> Production.KubernetesCluster.Statefulservices.kafka.OrderBus_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Consumes 'orders' events from\n<size:16>[Kafka]</size>"
+Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.OTLPgateway.OTelCollector_1 --> Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Jaeger_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Exports traces to\n<size:16>[OTLP]</size>"
+Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Prometheus_1 --> Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.OTLPgateway.OTelCollector_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Scrapes metrics from\n<size:16>[HTTP]</size>"
+Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.OTLPgateway.OTelCollector_1 --> Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.OpenSearch_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Exports logs to\n<size:16>[OTLP]</size>"
+Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Grafana_1 --> Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Jaeger_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Queries traces from\n<size:16>[HTTP]</size>"
+Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Grafana_1 --> Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Prometheus_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Queries metrics from\n<size:16>[HTTP]</size>"
+Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.Grafana_1 --> Production.KubernetesCluster.PlatformPlatformteamselfhostedswappableforaSaaSbackend.Telemetrybackends.OpenSearch_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Queries logs from\n<size:16>[HTTP]</size>"
+Production.KubernetesCluster.IngressLoadBalancer --> Production.KubernetesCluster.Streamalignedworkloads.Storefrontpod.Frontend_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Forwards HTTPS to\n<size:16>[HTTPS]</size>"
+
+@enduml

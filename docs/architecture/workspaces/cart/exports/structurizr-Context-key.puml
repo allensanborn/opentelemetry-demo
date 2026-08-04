@@ -1,0 +1,73 @@
+@startuml
+
+set separator none
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Software System
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0= {
+    BackgroundColor: #1168bd;
+    LineColor: #0b4884;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 200;
+  }
+  // Element,Software System,Platform
+  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0= {
+    BackgroundColor: #667085;
+    LineColor: #474e5d;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 200;
+  }
+  // Relationship,FeatureFlag
+  .Relationship-UmVsYXRpb25zaGlwLEZlYXR1cmVGbGFn {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #7a7a7a;
+    FontColor: #7a7a7a;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // Relationship,Telemetry
+  .Relationship-UmVsYXRpb25zaGlwLFRlbGVtZXRyeQ== {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #7a7a7a;
+    FontColor: #7a7a7a;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // transparent element for relationships in legend
+  .Element-Transparent {
+    BackgroundColor: transparent;
+    LineColor: transparent;
+    FontColor: transparent;
+  }
+</style>
+
+rectangle "==Software System" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>>
+
+rectangle "==Software System, Platform" <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0sUGxhdGZvcm0=>>
+
+rectangle "." <<.Element-Transparent>> as 1
+1 --> 1 <<Relationship-UmVsYXRpb25zaGlwLEZlYXR1cmVGbGFn>> : "FeatureFlag"
+
+rectangle "." <<.Element-Transparent>> as 2
+2 --> 2 <<Relationship-UmVsYXRpb25zaGlwLFRlbGVtZXRyeQ==>> : "Telemetry"
+
+@enduml

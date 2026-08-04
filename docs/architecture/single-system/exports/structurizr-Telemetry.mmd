@@ -1,0 +1,98 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Container View: Astronomy Shop"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    26("<div style='font-weight: bold'>Observability Backend</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>OpenTelemetry Collector plus<br />Jaeger, Prometheus, Grafana,<br />and OpenSearch; receives all<br />traces, metrics, and logs.</div>")
+    style 26 fill:#8a8a8a,stroke:#606060,color:#ffffff
+
+    subgraph 2 ["Astronomy Shop"]
+      style 2 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      subgraph group1 ["Chat / AI Assistant"]
+        style group1 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        6("<div style='font-weight: bold'>Chatbot</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / FastAPI]</div><div style='font-size: 80%; margin-top:10px'>Chat UI for the shopping<br />assistant.</div>")
+        style 6 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        7("<div style='font-weight: bold'>Agent</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / LangChain + LangGraph]</div><div style='font-size: 80%; margin-top:10px'>LLM agent that answers<br />shopping questions by calling<br />shop tools and an external<br />model.</div>")
+        style 7 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        8("<div style='font-weight: bold'>MCP Server</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / FastMCP]</div><div style='font-size: 80%; margin-top:10px'>Exposes the shop's REST API<br />to the agent as MCP tools.</div>")
+        style 8 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph group2 ["Edge & Web"]
+        style group2 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        3("<div style='font-weight: bold'>Frontend Proxy</div><div style='font-size: 70%; margin-top: 0px'>[Container: Envoy]</div><div style='font-size: 80%; margin-top:10px'>Single public entrypoint;<br />routes browser traffic to the<br />web app, images, chat, and<br />observability UIs.</div>")
+        style 3 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        4("<div style='font-weight: bold'>Frontend</div><div style='font-size: 70%; margin-top: 0px'>[Container: TypeScript / Next.js]</div><div style='font-size: 80%; margin-top:10px'>Server-rendered web store and<br />backend-for-frontend that<br />aggregates the shop services.</div>")
+        style 4 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        5("<div style='font-weight: bold'>Image Provider</div><div style='font-size: 70%; margin-top: 0px'>[Container: nginx]</div><div style='font-size: 80%; margin-top:10px'>Serves static product images.</div>")
+        style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph group3 ["Order Processing (async)"]
+        style group3 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        19("<div style='font-weight: bold'>Accounting</div><div style='font-size: 70%; margin-top: 0px'>[Container: C# / .NET]</div><div style='font-size: 80%; margin-top:10px'>Records placed orders for<br />bookkeeping.</div>")
+        style 19 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        20("<div style='font-weight: bold'>Fraud Detection</div><div style='font-size: 70%; margin-top: 0px'>[Container: Kotlin / JVM]</div><div style='font-size: 80%; margin-top:10px'>Flags potentially fraudulent<br />orders.</div>")
+        style 20 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph group4 ["Platform"]
+        style group4 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        21("<div style='font-weight: bold'>flagd</div><div style='font-size: 70%; margin-top: 0px'>[Container: Go / OpenFeature]</div><div style='font-size: 80%; margin-top:10px'>Feature-flag service;<br />evaluates the flags that<br />drive the demo's failure<br />scenarios. Queried by the<br />shop services.</div>")
+        style 21 fill:#6b4fbb,stroke:#4a3782,color:#ffffff
+      end
+
+      subgraph group5 ["Shop Services"]
+        style group5 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        10("<div style='font-weight: bold'>Cart</div><div style='font-size: 70%; margin-top: 0px'>[Container: C# / .NET]</div><div style='font-size: 80%; margin-top:10px'>Holds each user's shopping<br />cart.</div>")
+        style 10 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        11("<div style='font-weight: bold'>Checkout</div><div style='font-size: 70%; margin-top: 0px'>[Container: Go]</div><div style='font-size: 80%; margin-top:10px'>Orchestrates order placement<br />across cart, payment,<br />shipping, and email.</div>")
+        style 11 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        12("<div style='font-weight: bold'>Currency</div><div style='font-size: 70%; margin-top: 0px'>[Container: C++]</div><div style='font-size: 80%; margin-top:10px'>Converts money between<br />currencies.</div>")
+        style 12 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        13("<div style='font-weight: bold'>Product Catalog</div><div style='font-size: 70%; margin-top: 0px'>[Container: Go]</div><div style='font-size: 80%; margin-top:10px'>Lists and looks up products.</div>")
+        style 13 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        14("<div style='font-weight: bold'>Recommendation</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python]</div><div style='font-size: 80%; margin-top:10px'>Suggests related products.</div>")
+        style 14 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        15("<div style='font-weight: bold'>Payment</div><div style='font-size: 70%; margin-top: 0px'>[Container: Node.js]</div><div style='font-size: 80%; margin-top:10px'>Charges the order to a credit<br />card (mock).</div>")
+        style 15 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        16("<div style='font-weight: bold'>Shipping</div><div style='font-size: 70%; margin-top: 0px'>[Container: Rust]</div><div style='font-size: 80%; margin-top:10px'>Calculates shipping cost and<br />ships the order.</div>")
+        style 16 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        17("<div style='font-weight: bold'>Quote</div><div style='font-size: 70%; margin-top: 0px'>[Container: PHP]</div><div style='font-size: 80%; margin-top:10px'>Computes shipping-cost<br />quotes.</div>")
+        style 17 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        18("<div style='font-weight: bold'>Email</div><div style='font-size: 70%; margin-top: 0px'>[Container: Ruby / Sinatra]</div><div style='font-size: 80%; margin-top:10px'>Sends the order-confirmation<br />email (mock).</div>")
+        style 18 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        9("<div style='font-weight: bold'>Ad</div><div style='font-size: 70%; margin-top: 0px'>[Container: Java]</div><div style='font-size: 80%; margin-top:10px'>Returns contextual ads for a<br />product category.</div>")
+        style 9 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+    end
+
+    3-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    4-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    5-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    6-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    7-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    8-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    9-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    10-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    11-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    12-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    13-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    14-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    15-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    16-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    17-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    18-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    19-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    20-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+    21-. "<div>Exports traces, metrics &<br />logs via</div><div style='font-size: 70%'>[OTLP]</div>" .->26
+
+  end

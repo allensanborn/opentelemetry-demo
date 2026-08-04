@@ -1,0 +1,65 @@
+@startuml
+title <size:24>Container View: Observability Platform</size>\n<size:24>Inside the Observability Platform — the OTLP ingest gateway and the storage/dashboard backends. Every other system sends OTLP to the collector (those edges are declared in each consumer's workspace).</size>
+
+set separator none
+left to right direction
+skinparam ranksep 20
+skinparam nodesep 5
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Container
+  .Element-RWxlbWVudCxDb250YWluZXI= {
+    BackgroundColor: #438dd5;
+    LineColor: #2e6295;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #ffffff;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+    MaximumWidth: 200;
+  }
+  // Observability Platform
+  .Boundary-T2JzZXJ2YWJpbGl0eSBQbGF0Zm9ybQ== {
+    BackgroundColor: #ffffff;
+    LineColor: #474e5d;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #1168bd;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+</style>
+
+rectangle "Observability Platform\n<size:16>[Software System]</size>" <<Boundary-T2JzZXJ2YWJpbGl0eSBQbGF0Zm9ybQ==>> {
+  rectangle "==OTel Collector\n<size:16>[Container: OpenTelemetry Collector]</size>\n\nReceives OTLP; fans out to the backends." <<Element-RWxlbWVudCxDb250YWluZXI=>> as ObservabilityPlatform.OTelCollector
+  rectangle "==Jaeger\n<size:16>[Container: Jaeger]</size>\n\nTrace storage & UI." <<Element-RWxlbWVudCxDb250YWluZXI=>> as ObservabilityPlatform.Jaeger
+  rectangle "==Prometheus\n<size:16>[Container: Prometheus]</size>\n\nMetrics storage." <<Element-RWxlbWVudCxDb250YWluZXI=>> as ObservabilityPlatform.Prometheus
+  rectangle "==OpenSearch\n<size:16>[Container: OpenSearch]</size>\n\nLog & trace storage." <<Element-RWxlbWVudCxDb250YWluZXI=>> as ObservabilityPlatform.OpenSearch
+  rectangle "==Grafana\n<size:16>[Container: Grafana]</size>\n\nDashboards over metrics, traces, and logs." <<Element-RWxlbWVudCxDb250YWluZXI=>> as ObservabilityPlatform.Grafana
+}
+
+ObservabilityPlatform.OTelCollector --> ObservabilityPlatform.Jaeger <<Relationship-UmVsYXRpb25zaGlw>> : "Exports traces to\n<size:16>[OTLP]</size>"
+ObservabilityPlatform.OTelCollector --> ObservabilityPlatform.OpenSearch <<Relationship-UmVsYXRpb25zaGlw>> : "Exports logs to\n<size:16>[OTLP]</size>"
+ObservabilityPlatform.Prometheus --> ObservabilityPlatform.OTelCollector <<Relationship-UmVsYXRpb25zaGlw>> : "Scrapes metrics from\n<size:16>[HTTP]</size>"
+ObservabilityPlatform.Grafana --> ObservabilityPlatform.Prometheus <<Relationship-UmVsYXRpb25zaGlw>> : "Queries metrics from\n<size:16>[HTTP]</size>"
+ObservabilityPlatform.Grafana --> ObservabilityPlatform.Jaeger <<Relationship-UmVsYXRpb25zaGlw>> : "Queries traces from\n<size:16>[HTTP]</size>"
+ObservabilityPlatform.Grafana --> ObservabilityPlatform.OpenSearch <<Relationship-UmVsYXRpb25zaGlw>> : "Queries logs from\n<size:16>[HTTP]</size>"
+
+@enduml
